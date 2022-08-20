@@ -1,0 +1,33 @@
+{
+    "name": "saleh/laravel-crud",
+    "description": "make controller and view from command",
+    "autoload": {
+        "psr-4": {
+            "Saleh\\LaravelCrud\\": "src/"
+        },
+        "files": [
+            "src/helper.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "mohammadsaleh1",
+            "email": "mo12hammad3@hotmail.com"
+        }
+    ],
+    "require": {
+    "theanik/laravel-more-command":"@dev",
+        "doctrine/dbal": "^2.13"
+    },
+    
+    "require-dev": {
+    
+        "sven/artisan-view": "^3.4"
+    },
+    "extra": {
+        "laravel":{
+            "providers":"Saleh\\LaravelCrud\\LaravelCrudServiceProvider"
+
+        }
+    }
+}
