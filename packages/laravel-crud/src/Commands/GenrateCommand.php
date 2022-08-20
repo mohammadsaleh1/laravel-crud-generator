@@ -22,7 +22,6 @@ class GenrateCommand extends Command
 
     public function handle()
     {
-        $test = Artisan::call('make:view', ['view' => $this->argument('model') . '\\index']);
         $data = array();
         $model = $this->argument('model');
         $class = app($model);
@@ -30,6 +29,7 @@ class GenrateCommand extends Command
         $table = $class->getTable();
         $AttrToSkip = ['created_at', 'updated_at', 'deleted_at'];
         $columns = \Schema::getColumnListing($table);
+
         foreach ($columns as $column) {
 
             if (!in_array($column, $AttrToSkip)) {
@@ -40,16 +40,30 @@ class GenrateCommand extends Command
                 array_push($data, array($column, $type));
             }
         }
+        
+        $file = (splits($model, '\\'));
 
-        //Artisan::call('make:view', ['view' => $this->argument('model') . '\\create']);
-        $file = (splits($model,'\\'));
+        Artisan::call('make:view', ['view' => $file . '\\index.blade.php']);
 
         $index = $file . '\\index.blade.php';
         $stub = resource_path('views\\' . $index);
 
-        $myfile = fopen($stub, "w") or die("Unable to open file!");
+        $myfile = fopen($stub, "w+") or die("Unable to open file!");
 
         if (file_exists($stub)) {
+
+            fwrite($myfile, $this->index($data, $class));
+            fclose($myfile);
+        } else {
+            dd(4);
+        }
+        $create = $file . '\\create.blade.php';
+        $stub = resource_path('views\\' . $create);
+     //   dd($stub);
+        $myfile = fopen($stub, "w+") or die("Unable to open file!");
+
+        if (file_exists($stub)) {
+
             fwrite($myfile, $this->create($data, $class));
             fclose($myfile);
         } else {
@@ -58,33 +72,20 @@ class GenrateCommand extends Command
 
     }
 
-    public function create($data, $model) {
-        $this->render($data, $model);
+    public function index($data, $model)
+    {
 
-        $text = " @extends('app') @push('css')  @endpush @section('content')" . $this->render($data, $model) . "@endsection  @push('js')  @endpush";
+        $text = "@extends('app')\n@push('css')\n@endpush\n@section('content')\n" . generate_table($data, $model) . "@endsection  @push('js')  @endpush";
         return $text;
     }
-    public function head($data)
-    {
 
+    public function create($data, $model)
+    {
+       //dd($data);
+        $form_create = generate_create($data);
+        $text = "@extends('app')\n@push('css')\n@endpush\n@section('content')\n" . $form_create . "@endsection \n @push('js') \n @endpush";
+        return $text;
     }
 
-    public function render($data, $model)
-    {
-        $head = "";
-        $table = generate_table($data, $model::all());
-      
-        foreach ($data as $item => $index) {
-            $head .= '<th>' . $index[0] . '</th>';
-        }
-        dd($head);
-      
-
-        $models =
-        dd($table);
-        $user = '';
-        foreach ($data as $item) {
-            $user += $item;
-        }
-    }
+    
 }
