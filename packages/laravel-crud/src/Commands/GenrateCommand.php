@@ -17,8 +17,7 @@ class GenrateCommand extends Command
     {
         parent::__construct();
     }
-    public function fire()
-    {}
+
 
     public function handle()
     {
@@ -44,7 +43,28 @@ class GenrateCommand extends Command
         $file = (splits($model, '\\'));
 
         Artisan::call('make:view', ['view' => $file . '\\index.blade.php']);
+        Artisan::call('make:controller', ['name'=> $file . 'Controller']);
+        $stub = app_path('\\Http\\Controllers\\'.$file.'Controller.php');
+        $myfile = fopen($stub,'r') or die("Unable to open file!");
+        if (file_exists($stub)) {
+           $test =  fread($myfile,100000);
+           $test2 = explode('{',$test);
+           fclose($myfile);
+           $myfile = fopen($stub,'w') or die("Unable to open file!");
+           $method = '{
+                        public function index(){
+                      $'.$file. 's =' . $model.'::All();
+                      return view(\''.$file.'.index\',compact('.$file.'s));
+                        }
+                    }';
+                      
+                    
+                  
+           fwrite($myfile,$test2[0].$method);
 
+
+           dd($test2);
+        }
         $index = $file . '\\index.blade.php';
         $stub = resource_path('views\\' . $index);
 
@@ -59,7 +79,7 @@ class GenrateCommand extends Command
         }
         $create = $file . '\\create.blade.php';
         $stub = resource_path('views\\' . $create);
-     //   dd($stub);
+     
         $myfile = fopen($stub, "w+") or die("Unable to open file!");
 
         if (file_exists($stub)) {
@@ -71,6 +91,9 @@ class GenrateCommand extends Command
         }
 
     }
+    public function controller($model){
+    //    $text = 
+    }
 
     public function index($data, $model)
     {
@@ -81,7 +104,6 @@ class GenrateCommand extends Command
 
     public function create($data, $model)
     {
-       //dd($data);
         $form_create = generate_create($data);
         $text = "@extends('app')\n@push('css')\n@endpush\n@section('content')\n" . $form_create . "@endsection \n @push('js') \n @endpush";
         return $text;

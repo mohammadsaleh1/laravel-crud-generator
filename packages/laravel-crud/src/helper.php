@@ -46,13 +46,16 @@ function generate_create($data)
     $text = '<form action="" method="POST">
                 @csrf';
     foreach ($data as $item) {
-        // dd($item);
-        $text = '<input class="form-control" name=' . $item[0] . ' ' . '/>';
+        
+        $text .= input_Render($item[1],$item[0])."\n";
     }
+    $text .=  '</form>';
+    
+    return $text;
 
 }
 
-function trans($type, $name)
+function input_Render($type, $name)
 {
     switch ($type) {
         case ('textarea'):
@@ -64,6 +67,10 @@ function trans($type, $name)
             }
         case ('number'): {
                 return '<input type="number" name="' . $name . '"/>';
+            }
+
+        case ('date'): {
+                return '<input type="date" name="' . $name . '"/>';
             }
     }
 }
