@@ -55,22 +55,22 @@ function generate_create($data)
 
 }
 
-function input_Render($type, $name)
+function input_Render($type, $name , $value="")
 {
     switch ($type) {
         case ('textarea'):
             {
-                return '<textarea name="' . $name . '"></textarea>';
+                return '<textarea name="' . $name . '" value="old('.$name.') ?? '.$value.'"></textarea>';
             }
         case ('text'): {
-                return '<input type="text" name="' . $name . '"/>';
+                return '<input type="text"  name="' . $name . '" value="old('.$name.') ?? '.$value.'"/>';
             }
         case ('number'): {
-                return '<input type="number" name="' . $name . '"/>';
+                return '<input type="number" name="' . $name . '" value="old('.$name.') ?? '.$value.'"/>';
             }
 
         case ('date'): {
-                return '<input type="date" name="' . $name . '"/>';
+                return '<input type="date" name="' . $name . '" value="old('.$name.') ?? '.$value.'"/>';
             }
     }
 }

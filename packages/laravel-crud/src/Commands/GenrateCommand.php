@@ -18,7 +18,6 @@ class GenrateCommand extends Command
         parent::__construct();
     }
 
-
     public function handle()
     {
         $data = array();
@@ -44,6 +43,7 @@ class GenrateCommand extends Command
 
         Artisan::call('make:view', ['view' => $file . '\\index.blade.php']);
         Artisan::call('make:controller', ['name'=> $file . 'Controller']);
+
         $stub = app_path('\\Http\\Controllers\\'.$file.'Controller.php');
         $myfile = fopen($stub,'r') or die("Unable to open file!");
         if (file_exists($stub)) {
@@ -52,18 +52,36 @@ class GenrateCommand extends Command
            fclose($myfile);
            $myfile = fopen($stub,'w') or die("Unable to open file!");
            $method = '{
-                        public function index(){
-                      $'.$file. 's =' . $model.'::All();
-                      return view(\''.$file.'.index\',compact('.$file.'s));
-                        }
-                    }';
-                      
-                    
-                  
+                public function index(){
+                  $'.strtolower($file). 's =' .$model.'::All();
+                  return view(\''.$file.'.index\');
+                }
+
+                public function create(){
+                  return  view(\''.$file.'.create\');                 
+                }
+
+                public function store(Request $request){
+                    '.$model.'::create($request->all());
+                     return redirect()->back();
+                 }
+
+                 public function edit( '.$model .' $'.strtolower($file).'){
+                    return  view(\''.$file.'.edit\',compact($'.strtolower($file).'s));                 
+                }
+
+                 public function update(Request $request){
+                    '.$model.'::update($request->all());
+                    return redirect()->back();
+                 }
+
+                 public function delete(Request $request){
+                    '.$model.'::update($request->all());
+                    return redirect()->back();
+                 }
+            }';
+                              
            fwrite($myfile,$test2[0].$method);
-
-
-           dd($test2);
         }
         $index = $file . '\\index.blade.php';
         $stub = resource_path('views\\' . $index);
